@@ -1,4 +1,15 @@
-not working : 
+Depends on : kivy 1.10 framework 
+Si5351 Adafruit RF signal generator
+DS17xx Real time clock
+Adafruit ADC converter
+Adafruit DAC converter
+SotaBeam Vari audio DSP module
+
+
+
+_______________________________________
+
+Not working yet ! : 
 _______________________________________
 
 
@@ -6,4 +17,5 @@ _______________________________________
 Rit Tx , Rit Rx  , Tx listen
 Frequency manual dialpad
 CW speed rotary encoder
+Computer contesting interfacing
 
