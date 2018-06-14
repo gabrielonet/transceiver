@@ -47,7 +47,6 @@ for x in reversed(range(100)):
             sleep(0.005)
             GPIO.output(26, 0)
             
-
 print 'pressing'
 sleep(0.3)
 GPIO.output(13, 0)

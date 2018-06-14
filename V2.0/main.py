@@ -9,6 +9,9 @@ import multiprocessing
 from multiprocessing import Process, Value
 import RPi.GPIO as GPIO
 
+import Adafruit_ADS1x15
+
+
 import encoder
 import dsp
 
@@ -46,8 +49,9 @@ GPIO.output(23, 1)  # set Cw/Usb
 
 class Main_Screen(FloatLayout):
 
-        #adc = Adafruit_ADS1x15.ADS1115()
-        GAIN = 8
+        adc = Adafruit_ADS1x15.ADS1115()
+        GAIN = 1
+        meter = 0
         utc_time = StringProperty()
         M1 = StringProperty()
         M2 = StringProperty()
@@ -56,7 +60,9 @@ class Main_Screen(FloatLayout):
         K3 = StringProperty()
         H1 = StringProperty()
         H2 = StringProperty()
-        meter = StringProperty()
+        button_image  = StringProperty()
+
+        meter = NumericProperty()
         af_preamp_bolean = False
         af_preamp_status = StringProperty('[color=#008000]Off[/color]')
         rf_preamp_bolean = False
@@ -166,7 +172,8 @@ class Main_Screen(FloatLayout):
                 if 0 <= int(str(self.M1)+str(self.M2)) <=5:
                         GPIO.output(14, 0)  
                         GPIO.output(15, 0) 
-                        GPIO.output(18, 0) 
+                        GPIO.output(18, 0)
+                        button_image = "img/shape_off.png"
                 if 5 <= int(str(self.M1)+str(self.M2)) <=9:
                         GPIO.output(14, 1)  
                         GPIO.output(15, 0) 
@@ -204,7 +211,8 @@ class Main_Screen(FloatLayout):
             ### DSP UPDATE ###
             self.filter_start_x = dsp_start_x.value/10
             self.filter_stop_x = dsp_stop_x.value/10
-            
+            ## ADC converter
+            self.meter = self.adc.read_adc(3, gain=self.GAIN) / 260
 
 class MyApp(App):
       
