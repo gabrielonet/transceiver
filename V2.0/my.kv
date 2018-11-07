@@ -1,4 +1,25 @@
+<CustomDropDown>:
+    Button:
+        text: 'My first Item'
+        size_hint_y: None
+        height: 44
+        on_release: root.select('item1')
+    Label:
+        text: 'Unselectable item'
+        size_hint_y: None
+        height: 44
+    Button:
+        text: 'My second Item'
+        size_hint_y: None
+        height: 44
+        on_release: root.select('item2')
+
+
+
 <Main_Screen>:
+
+
+
     AnchorLayout:
         ScreenManager:
             size_hint: 1, 1
@@ -91,20 +112,6 @@
                         pos: 720, 280
                         size_hint: .1, .1
 
-                    
-            Screen:
-                name: 'mode'
-                GridLayout: 
-                    cols: 3
-                    padding: 50
-                    Button:
-                        text: "CW"
-                        on_press: _screen_manager.current = 'home'
-                    Button:
-                        text: "USB"
-                    Button:
-                        text: "LSB"
-
             Screen:
                 name: 'band'
                 GridLayout: 
@@ -134,9 +141,59 @@
                     Button:
                         text: "28 Mhz"
                         on_press: _screen_manager.current = 'home'
-                        on_press: root.band_switch('28')                        
-                        
+                        on_press: root.band_switch('28')   
+            Screen:
+                name: 'System'
+                GridLayout: 
+                    cols: 3
+                    padding: 100
+                    row_force_default: True
+                    row_default_height: 60
+                    size_hint_x: None
+                    width: 600
+                    Button:
+                        text: "System Shutdown"
+                        on_press: root.sys_shut_down()
+                        #on_press: root.band_switch('35')
+                        #background_normal:  root.button_image                        
 
+
+                    Button:
+                        text: "System Reboot"
+                        on_press: root.sys_reboot()
+                        #on_press: root.band_switch('35')
+                        #background_normal:  root.button_image                                  
+
+            Screen:
+                name: 'Mode'
+                GridLayout: 
+                    cols: 3
+                    padding: 100
+                    row_force_default: True
+                    row_default_height: 60
+                    size_hint_x: None
+                    width: 600
+                    Button:
+                        text: "USB"
+                        #on_press: root.sys_shut_down()
+                        #on_press: root.band_switch('35')
+                        #background_normal:  root.button_image   
+                        on_press: root.mode()
+                    Button:
+                        text: "LSB"
+                        #on_press: root.sys_reboot()
+                        #on_press: root.band_switch('35')
+                        #background_normal:  root.button_image                                
+                        on_press: root.mode()
+                    Button:
+                        text: "CW"
+                        #on_press: root.sys_reboot()
+                        #on_press: root.band_switch('35')
+                        #background_normal:  root.button_image                          
+                        #on_press: root.mode()
+                        
+                        
+                        
     AnchorLayout:
         anchor_x: 'left'
         anchor_y: 'bottom'
@@ -160,8 +217,22 @@
                 #background_normal:  "img/normal.png"
                 #background_down:  "img/down.png"
                 #on_press: _screen_manager.current = 'home'
-                on_press: _screen_manager.current = 'band'                
-                
+                on_press: _screen_manager.current = 'band'               
+            Button:
+                markup: True
+                text:  'Mode'
+                #font_size:  24
+                #background_normal:  "img/normal.png"
+                #background_down:  "img/down.png"
+                #on_press: _screen_manager.current = 'home'
+                on_press: _screen_manager.current = 'Mode'                              
+            Button:
+                markup: True
+                text:  'System'
+                #font_size:  24
+                #background_normal:  "img/normal.png"
+                #background_down:  "img/down.png"
+                on_press: _screen_manager.current = 'System'
                 
     AnchorLayout:
         anchor_x: 'right'
@@ -213,13 +284,18 @@
                 background_normal:  "img/shape_off.png"
                 background_down: "img/shape_on.png"
                 
-            ToggleButton:
-                markup: True
-                name: 'Mode'
-                text: 'Mode '+ root.mode_status
-                on_press: root.mode()
-                background_normal:  "img/shape_off.png"
-                background_down: "img/shape_on.png"
+
+            #ToggleButton:
+            #    markup: True
+            #    name: 'AGC'
+            #    text: 'AGC '+ root.agc_status
+            #    on_press: root.agc()
+            #    background_normal:  "img/shape_off.png"
+            #    background_down: "img/shape_on.png"                
+                
+                
+                
+                
             Label:
                 markup: True
                 text: '[size=24]'+root.utc_time+'[/size]'

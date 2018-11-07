@@ -3,6 +3,9 @@ from Adafruit_I2C import Adafruit_I2C
 import smbus
 import time
 
+
+
+
 SI5351_REGISTER_0_DEVICE_STATUS                       = 0
 SI5351_REGISTER_1_INTERRUPT_STATUS_STICKY             = 1
 SI5351_REGISTER_2_INTERRUPT_STATUS_MASK               = 2
@@ -273,7 +276,7 @@ class Si5351(object):
         self.i2c.write8(baseaddr + 7, (P2 & 0x000000FF))
 
         # Configure the clk control and enable the output
-        clkControlReg = 0x0F                     # 8mA drive strength, MS0 as CLK0 source, Clock not inverted, powered up
+        clkControlReg = 0x0F                  # 8mA drive strength, MS0 as CLK0 source, Clock not inverted, powered up
         if pll == self.PLL_B: clkControlReg |= (1 << 5)   # Uses PLLB 
         if num == 0: clkControlReg |= (1 << 6)            # Integer mode
         if output == 0: self.i2c.write8(SI5351_REGISTER_16_CLK0_CONTROL, clkControlReg)
@@ -287,19 +290,19 @@ class Si5351(object):
         val = 0x00 if enabled else 0xFF
         self.i2c.write8(SI5351_REGISTER_3_OUTPUT_ENABLE_CONTROL, val)
 
-si = Si5351()
-if __name__ == '__main__':
-    si = Si5351()
+#si = Si5351()
+#if __name__ == '__main__':
+    #si = Si5351()
     
 
-    #print "Set Output #0 to 13.703704 MHz"  
+    ##print "Set Output #0 to 13.703704 MHz"  
 
-    # vco = 25 MHz * (24 + 2 / 3) = 616.67 MHz
-    #si.setupPLL(si.PLL_A, 24, 2, 3)
-    # out = 616.67 MHz / 45 = 13.703704 MHz 
-    #si.setupMultisynth(0, si.PLL_A, 45)
-    # si.setupRdiv(0, si.R_DIV_64)
-    si.enableOutputs(True)
+    ## vco = 25 MHz * (24 + 2 / 3) = 616.67 MHz
+    ##si.setupPLL(si.PLL_A, 24, 2, 3)
+    ## out = 616.67 MHz / 45 = 13.703704 MHz 
+    ##si.setupMultisynth(0, si.PLL_A, 45)
+    ## si.setupRdiv(0, si.R_DIV_64)
+    #si.enableOutputs(True)
 
 
 

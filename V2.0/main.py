@@ -1,15 +1,21 @@
 #!/usr/bin/python
+from __future__ import division
+
 import time
+import os
 from time import sleep
 from datetime import datetime
 from ctypes import c_char_p
 from decimal import Decimal
+import math
 
 import multiprocessing
 from multiprocessing import Process, Value
 import RPi.GPIO as GPIO
 
 import Adafruit_ADS1x15
+import Adafruit_MCP4725
+
 
 
 import encoder
@@ -34,6 +40,14 @@ from kivy.clock import Clock
 from kivy.graphics import Color, Rectangle
 from kivy.properties import NumericProperty,StringProperty,ReferenceListProperty,ObjectProperty
 from kivy.lang import Builder
+import math
+from math import floor
+import fractions
+from fractions import Fraction
+from Si5351 import Si5351 
+si = Si5351()
+
+
 
 
 
@@ -42,13 +56,13 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(24, GPIO.OUT)  # RF Preamp
 GPIO.setup(20, GPIO.OUT)  # Audio preamp
 GPIO.setup(23, GPIO.OUT)  # Usb/Lsb
-GPIO.output(24, 1)  # set RF Preamp to off ro RX
+GPIO.output(24, 0)  # set RF Preamp to off ro RX
 GPIO.output(13, 1)  # set Sota mode to Center
 GPIO.output(20, 1)  # set Audio  Preamp to off 
 GPIO.output(23, 1)  # set Cw/Usb 
 
 class Main_Screen(FloatLayout):
-
+        dac = Adafruit_MCP4725.MCP4725(address=0x61, busnum=1)
         adc = Adafruit_ADS1x15.ADS1115()
         GAIN = 1
         meter = 0
@@ -69,17 +83,20 @@ class Main_Screen(FloatLayout):
         rf_preamp_status = StringProperty('[color=#008000]Off[/color]')
         mode_bolean = False
         mode_status = StringProperty('Usb')
+        agc_status = StringProperty('On')
         sota_bolean = False
+        agc_bolean = False
 
         dsp_mode = StringProperty('Center Mode')
         tcvr_status = StringProperty()
-
+        agc_mode = NumericProperty()
         rit_rx_status = StringProperty('Rit Off')
         rit_tx_status = StringProperty('Rit Off')
         rit_rx_bolean = False
         rit_tx_bolean = False
         band_switch_bolean = False
         rit = StringProperty()
+        #dac_level = 4096
 
 
         sota_bw = StringProperty()
@@ -92,9 +109,9 @@ class Main_Screen(FloatLayout):
             self.rf_preamp_bolean = not self.rf_preamp_bolean
             if self.rf_preamp_bolean == True:
                 self.rf_preamp_status = '[color=#FF0000]On[/color]'
-                GPIO.output(24, 0)
-            else:
                 GPIO.output(24, 1)
+            else:
+                GPIO.output(24, 0)
                 self.rf_preamp_status = '[color=#008000]Off[/color]'
 
         def mode(self):
@@ -105,6 +122,22 @@ class Main_Screen(FloatLayout):
             else:
                 self.mode_status = 'Lsb'
                 GPIO.output(23, 0)
+
+        def agc(self):
+            self.agc_bolean = not self.agc_bolean
+            if self.agc_bolean == False:
+                self.agc_status = 'on'
+                self.agc_mode = 1
+            else:
+                self.agc_status = 'off'
+                self.agc_mode = 0
+
+
+        def sys_shut_down(arg):
+            os.system("shutdown now -h")
+        def sys_reboot(arg):
+            os.system("reboot")            
+        
 
         def af_preamp(self):
             self.af_preamp_bolean = not self.af_preamp_bolean
@@ -174,22 +207,27 @@ class Main_Screen(FloatLayout):
                         GPIO.output(15, 0) 
                         GPIO.output(18, 0)
                         button_image = "img/shape_off.png"
-                if 5 <= int(str(self.M1)+str(self.M2)) <=9:
+                        self.dac.set_voltage(1265)
+                if 5 < int(str(self.M1)+str(self.M2)) <=9:
                         GPIO.output(14, 1)  
                         GPIO.output(15, 0) 
-                        GPIO.output(18, 0) 
-                if 9 <= int(str(self.M1)+str(self.M2)) <=18:
+                        GPIO.output(18, 0)
+                        self.dac.set_voltage(1271)
+                if 9 < int(str(self.M1)+str(self.M2)) <=18:
                         GPIO.output(14, 0)  
                         GPIO.output(15, 1) 
                         GPIO.output(18, 0) 
-                if 18 <= int(str(self.M1)+str(self.M2)) <=24:
+                        self.dac.set_voltage(1315)
+                if 18 < int(str(self.M1)+str(self.M2)) <=24:
                         GPIO.output(14, 1)  
                         GPIO.output(15, 1) 
-                        GPIO.output(18, 0) 
-                if 24 <= int(str(self.M1)+str(self.M2)) <=30:
+                        GPIO.output(18, 0)
+                        self.dac.set_voltage(1495)
+                if 24 < int(str(self.M1)+str(self.M2)) <=30:
                         GPIO.output(14, 0)  
                         GPIO.output(15, 0) 
-                        GPIO.output(18, 1) 
+                        GPIO.output(18, 1)
+                        self.dac.set_voltage(1530)
             if step.value == 1:
                 self.M2 = '[u]'+self.M2+'[/u]'
             if step.value == .1:
@@ -212,8 +250,27 @@ class Main_Screen(FloatLayout):
             self.filter_start_x = dsp_start_x.value/10
             self.filter_stop_x = dsp_stop_x.value/10
             ## ADC converter
-            self.meter = self.adc.read_adc(3, gain=self.GAIN) / 260
+            start_smeter = 0
+            s_meter = int(self.adc.read_adc(3, gain=self.GAIN))/100
+            #if s_meter <= 0.1:
+                #s_meter = 0.2
+            ##smeter_diff = s_meter - start_smeter
+            #start_smeter = s_meter  
+            ##print self.meter    
+            ##print s_meter
+            #agc=s_meter*20
+            #if self.agc_mode == 0:
+                #agc = 0
+            ##self.dac.set_voltage(4096-int(agc))
+            #self.dac.set_voltage(int(agc))
 
+            ##print self.dac.set_voltage
+            #self.meter = agc/40
+            ##print self.meter
+            
+            ##print str(int(s_meter)) + str('---')+str(agc)
+            ##print math.log10(s_meter)*20 # define decibel value
+            ##print agc
 class MyApp(App):
       
     def build(self):
@@ -227,7 +284,8 @@ class MyApp(App):
         return layout
 if __name__ == '__main__':
     start_freq =14
-    band_tmp = start_freq
+    #band_tmp = start_freq
+    band_tmp=0
     freq = Value('d', start_freq)
     step = Value('d',0.0001)
     tcvr_status = Value('i',0 )

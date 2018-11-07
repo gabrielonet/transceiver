@@ -18,7 +18,7 @@ GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # RIT enc A
 GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP) # RIT enc B 
 GPIO.setup(11, GPIO.IN, pull_up_down=GPIO.PUD_UP) # PTT 
 GPIO.setup(12, GPIO.OUT)  # Tx/Rx Relay 
-GPIO.output(12, 1)  # set TX/RX ro RX
+GPIO.output(12, 0)  # set TX/RX ro RX
 
 GPIO.setup(14, GPIO.OUT)  # A - Band Relay
 GPIO.setup(15, GPIO.OUT)  # B  -Band Relay
@@ -105,10 +105,10 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre):
             global rit_tx_enc
             if  GPIO.input(11) == 0 :
                 GPIO.output(20, 1)
-                GPIO.output(12, 0) 
+                GPIO.output(12, 1) 
                 tcvr_status.value = 1
             else:
-                GPIO.output(12, 1)             
+                GPIO.output(12, 0)             
                 tcvr_status.value = 0
                 rit.value = rit_rx_enc
                 if af_pre.value == 1:
@@ -123,13 +123,21 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre):
             else:
                 si_freq = freq.value + rit_tx_enc
             integrat(si_freq)
-
-
+    #def bfo():
+            ## Set bfo for USB/LSB filter (9 mhz sharp)
+            ##si.setupPLL(si.PLL_B, 21, 6, 10)
+            ##si.setupMultisynth(1, si.PLL_B, 60)
+            ## Set bfo for USB/LSB filter (9 mhz sharp)
+            #si.setupPLL(si.PLL_B, 28, 1039, 12500)
+            #si.setupMultisynth(1, si.PLL_B, 78)
 
     rit.value = 0
     tcvr_status.value = 0
     si = Si5351()
+    si.enableOutputs(True)  
+
     def integrat(freq):
+        #print freq
         vco=970
         div=int(vco/freq)
         vco=freq*div
@@ -144,9 +152,8 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre):
         if (b > 0):
             c=int(str(bc_division).split("/")[1])  
         si.setupPLL(si.PLL_A, a, b, c)
-        
-        si.setupMultisynth(0, si.PLL_A, div)
-        si.enableOutputs(True)      
+        si.setupMultisynth(2, si.PLL_A, div)
+
     
     def touch_rit():
         print 'touch screen RIT event happened'
@@ -158,7 +165,8 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre):
     GPIO.add_event_detect(22, GPIO.BOTH, callback=clarifier)
     GPIO.add_event_detect(27, GPIO.BOTH, callback=clarifier)
     GPIO.add_event_detect(11, GPIO.BOTH, callback=ptt)
-    vfo() #  generate signal at reboot
+    vfo() #  generate VFO freq at reboot
+    #bfo() #  generate BFO freq at reboot 
     try:
         while True:
             ## this is the place where main process c_types value changes are executing shit inside loop on sleep timing  bases without using observer as variable changes event
@@ -170,38 +178,38 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre):
                 if str(touch_event.value).startswith(('2')) == True:
                     if touch_event.value == 235:
                         print 'relay 80 meters'
-                        GPIO.output(14, 0)  
-                        GPIO.output(15, 0) 
-                        GPIO.output(18, 0)  
+                        #GPIO.output(14, 0)  
+                        #GPIO.output(15, 0) 
+                        #GPIO.output(18, 0)  
                         freq.value = 3.5
                         vfo()
                     if touch_event.value == 27:
                         print 'relay 40 meters'
-                        GPIO.output(14, 1)  
-                        GPIO.output(15, 0) 
-                        GPIO.output(18, 0)  
+                        #GPIO.output(14, 1)  
+                        #GPIO.output(15, 0) 
+                        #GPIO.output(18, 0)  
                         freq.value = 7
                         vfo()
                     if touch_event.value == 214:
                         print 'relay 20 meters'
-                        GPIO.output(14, 0)  
-                        GPIO.output(15, 1) 
-                        GPIO.output(18, 0)
+                        #GPIO.output(14, 0)  
+                        #GPIO.output(15, 1) 
+                        #GPIO.output(18, 0)
                         freq.value = 14
                         vfo()
                     if touch_event.value == 221:
                         print 'relay 15 meters'
-                        GPIO.output(14, 1)  
-                        GPIO.output(15, 1) 
-                        GPIO.output(18, 0)
+                        #GPIO.output(14, 1)  
+                        #GPIO.output(15, 1) 
+                        #GPIO.output(18, 0)
                         freq.value = 21
                         vfo()
                         
                     if touch_event.value == 228:
                         print 'relay 10 meters'
-                        GPIO.output(14, 0)  
-                        GPIO.output(15, 0) 
-                        GPIO.output(18, 1) 
+                        #GPIO.output(14, 0)  
+                        #GPIO.output(15, 0) 
+                        #GPIO.output(18, 1) 
                         freq.value = 28
                         vfo()
 
