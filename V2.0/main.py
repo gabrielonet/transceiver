@@ -9,6 +9,7 @@ from ctypes import c_char_p
 from decimal import Decimal
 import math
 
+
 import multiprocessing
 from multiprocessing import Process, Value
 import RPi.GPIO as GPIO
@@ -20,7 +21,7 @@ import Adafruit_MCP4725
 
 import encoder
 import dsp
-
+import keyer
 #import Kivy framework stuff
 import kivy
 from kivy.app import App
@@ -55,11 +56,19 @@ si = Si5351()
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(24, GPIO.OUT)  # RF Preamp
 GPIO.setup(20, GPIO.OUT)  # Audio preamp
-GPIO.setup(23, GPIO.OUT)  # Usb/Lsb
+GPIO.setup(23, GPIO.OUT)  # Usb
+GPIO.setup(25, GPIO.OUT)  # Lsb
+GPIO.setup(8, GPIO.OUT)  # CW
+
+
+
 GPIO.output(24, 0)  # set RF Preamp to off ro RX
 GPIO.output(13, 1)  # set Sota mode to Center
 GPIO.output(20, 1)  # set Audio  Preamp to off 
-GPIO.output(23, 1)  # set Cw/Usb 
+GPIO.output(23, 1)  # set USB on
+GPIO.output(25, 0)  # set LSB off
+GPIO.output(8, 0)  # set CW off
+
 
 class Main_Screen(FloatLayout):
         dac = Adafruit_MCP4725.MCP4725(address=0x61, busnum=1)
@@ -75,6 +84,9 @@ class Main_Screen(FloatLayout):
         H1 = StringProperty()
         H2 = StringProperty()
         button_image  = StringProperty()
+        last_mode = 23
+
+       
 
         meter = NumericProperty()
         af_preamp_bolean = False
@@ -96,11 +108,7 @@ class Main_Screen(FloatLayout):
         rit_tx_bolean = False
         band_switch_bolean = False
         rit = StringProperty()
-        #dac_level = 4096
-
-
         sota_bw = StringProperty()
-
         filter_start_x = NumericProperty()
         filter_stop_x = NumericProperty()
         sota_bw = StringProperty()
@@ -114,14 +122,21 @@ class Main_Screen(FloatLayout):
                 GPIO.output(24, 0)
                 self.rf_preamp_status = '[color=#008000]Off[/color]'
 
-        def mode(self):
-            self.mode_bolean = not self.mode_bolean
-            if self.mode_bolean == False:
-                self.mode_status = 'Usb'
+        def mode(self,mode_value):
+            if mode_value == 23:
+                GPIO.output(self.last_mode, 0)
                 GPIO.output(23, 1)
-            else:
-                self.mode_status = 'Lsb'
-                GPIO.output(23, 0)
+                self.last_mode = 23
+            if mode_value == 25:
+                GPIO.output(self.last_mode, 0)
+                GPIO.output(25, 1)
+                self.last_mode = 25
+            if mode_value == 8:
+                GPIO.output(self.last_mode, 0)                
+                GPIO.output(8, 1)
+                self.last_mode = 8 
+            touch_event.value = int('3'+ str(self.last_mode))    
+            #print self.last_mode    
 
         def agc(self):
             self.agc_bolean = not self.agc_bolean
@@ -208,26 +223,33 @@ class Main_Screen(FloatLayout):
                         GPIO.output(18, 0)
                         button_image = "img/shape_off.png"
                         self.dac.set_voltage(1265)
+                        band_tmp = 3.5
                 if 5 < int(str(self.M1)+str(self.M2)) <=9:
                         GPIO.output(14, 1)  
                         GPIO.output(15, 0) 
                         GPIO.output(18, 0)
                         self.dac.set_voltage(1271)
+                        band_tmp = 7
                 if 9 < int(str(self.M1)+str(self.M2)) <=18:
                         GPIO.output(14, 0)  
                         GPIO.output(15, 1) 
                         GPIO.output(18, 0) 
                         self.dac.set_voltage(1315)
+                        band_tmp = 14
                 if 18 < int(str(self.M1)+str(self.M2)) <=24:
                         GPIO.output(14, 1)  
                         GPIO.output(15, 1) 
                         GPIO.output(18, 0)
                         self.dac.set_voltage(1495)
+                        band_tmp = 21
                 if 24 < int(str(self.M1)+str(self.M2)) <=30:
                         GPIO.output(14, 0)  
                         GPIO.output(15, 0) 
                         GPIO.output(18, 1)
                         self.dac.set_voltage(1530)
+                        band_tmp = 28
+                print int(str(self.M1)+str(self.M2))
+                print band_tmp
             if step.value == 1:
                 self.M2 = '[u]'+self.M2+'[/u]'
             if step.value == .1:
@@ -250,27 +272,7 @@ class Main_Screen(FloatLayout):
             self.filter_start_x = dsp_start_x.value/10
             self.filter_stop_x = dsp_stop_x.value/10
             ## ADC converter
-            start_smeter = 0
-            s_meter = int(self.adc.read_adc(3, gain=self.GAIN))/100
-            #if s_meter <= 0.1:
-                #s_meter = 0.2
-            ##smeter_diff = s_meter - start_smeter
-            #start_smeter = s_meter  
-            ##print self.meter    
-            ##print s_meter
-            #agc=s_meter*20
-            #if self.agc_mode == 0:
-                #agc = 0
-            ##self.dac.set_voltage(4096-int(agc))
-            #self.dac.set_voltage(int(agc))
-
-            ##print self.dac.set_voltage
-            #self.meter = agc/40
-            ##print self.meter
-            
-            ##print str(int(s_meter)) + str('---')+str(agc)
-            ##print math.log10(s_meter)*20 # define decibel value
-            ##print agc
+            self.meter = int(self.adc.read_adc(0, gain=self.GAIN))
 class MyApp(App):
       
     def build(self):
@@ -288,6 +290,7 @@ if __name__ == '__main__':
     band_tmp=0
     freq = Value('d', start_freq)
     step = Value('d',0.0001)
+    bfo = Value('d',0)
     tcvr_status = Value('i',0 )
     af_pre = Value('i',1)
     rit = Value('d',0 )
@@ -297,15 +300,18 @@ if __name__ == '__main__':
     dsp_stop_x = Value('i' , 3500)
     sota_dsp_mode = Value('i' , 1) 
     touch_event = Value('i',int('2'+str(start_freq)) )   
-    proc_1 = multiprocessing.Process(target=encoder.buttons , args = (freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre) )
+    proc_1 = multiprocessing.Process(target=encoder.buttons , args = (freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo) )
     proc_1.start()
     proc_2 = multiprocessing.Process(target=dsp.sota_dsp , args = (sota_dsp_mode,dsp_start_x,dsp_stop_x) )    
     proc_2.start()
+    proc_3 = multiprocessing.Process(target=keyer.iambic)
+    proc_3.start()
     MyApp().run()
 
     ######## LEGEND ######
     # 1x - rit events
     # 2x - band events
+    # 3x - mode events
     
 
 

@@ -23,8 +23,8 @@ GPIO.output(12, 0)  # set TX/RX ro RX
 GPIO.setup(14, GPIO.OUT)  # A - Band Relay
 GPIO.setup(15, GPIO.OUT)  # B  -Band Relay
 GPIO.setup(18, GPIO.OUT)  # C  -Band Relay
-
-
+GPIO.setup(16, GPIO.OUT)  #  Key out
+GPIO.setup(16, 0)  #  Key out to transmit
 
 encoder_temp = 0
 rit_temp = 0
@@ -32,7 +32,7 @@ rit_rx_enc = 0
 rit_tx_enc = 0
 semaphor = 0
 
-def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre):
+def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo):
     def knob(greycode):
                 global encoder_temp
                 # detect if rotary right
@@ -119,10 +119,11 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre):
             global rit_rx_enc
             global rit_tx_enc
             if tcvr_status.value == 0:
-                si_freq =  freq.value + rit_rx_enc + 9 
+                si_freq =  freq.value + rit_rx_enc + 9.0006 + bfo.value
             else:
                 si_freq = freq.value + rit_tx_enc
             integrat(si_freq)
+            #print bfo.value
     #def bfo():
             ## Set bfo for USB/LSB filter (9 mhz sharp)
             ##si.setupPLL(si.PLL_B, 21, 6, 10)
@@ -212,9 +213,19 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre):
                         #GPIO.output(18, 1) 
                         freq.value = 28
                         vfo()
+                if str(touch_event.value).startswith(('3')) == True:
+                    if touch_event.value == 323:
+                        bfo.value =0
+                        vfo()
+                    if touch_event.value == 325:
+                        bfo.value = 0
+                        vfo()
+                    if touch_event.value == 38:
+                        bfo.value = 0.0006
+                        vfo()                        
 
 
-                print touch_event.value    
+                #print touch_event.value    
                 touch_event.value = 0
     except KeyboardInterrupt:
         print "good bye yo8rxp"
