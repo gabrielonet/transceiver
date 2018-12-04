@@ -24,7 +24,6 @@ def iambic(dummy,adc0):
     while True:
                 tmp_speed = adc0.value
                 speed = float((100-tmp_speed)/1000)
-                print speed
                 if (GPIO.input(5)) == 0 :
                     GPIO.output(7, 1)  # set CW on
                     sleep(speed)    
