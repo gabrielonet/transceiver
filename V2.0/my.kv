@@ -8,7 +8,10 @@
                 FloatLayout:
                     canvas:
                         Line:
-                            points: [10,200 ,root.filter_start_x, 200,root.filter_start_x, 240,root.filter_stop_x,240,root.filter_stop_x,200,360,200]                                
+                            points: [10,200 ,root.filter_start_x, 200,root.filter_start_x, 240,root.filter_stop_x,240,root.filter_stop_x,200,360,200]    
+                        Line: 
+                            points: [200,200 ,200,250 ]    
+                            
                     Label:
                         markup: True
                         text: str(root.filter_start_x*10)+' Hz'
@@ -46,6 +49,9 @@
                         #text: '  S____1____3____5____7_____9_____10____30____50 dB'
                         pos: (0 ,105)
                         size_hint: (.5, 1)
+                        
+                   
+
                 
                     Button:
                         markup: True
@@ -55,6 +61,18 @@
                         size_hint: (.45, .1)
                         #on_press: _screen_manager.current = 'dialpad'
                         background_color: (1, 1, 1, 0)
+ 
+                              
+ 
+                    Slider:
+                        id: slider_id
+                        min: 30
+                        max: 60
+                        step: 1
+                        pos: (430, 180)
+                        size_hint: (.45, .1)
+                        on_touch_move: root.slider(slider_id.value)
+                        on_touch_up: root.slider(slider_id.value)                        
 
                         
                     ToggleButton:

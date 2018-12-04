@@ -14,7 +14,7 @@ import multiprocessing
 from multiprocessing import Process, Value
 import RPi.GPIO as GPIO
 
-import Adafruit_ADS1x15
+#import Adafruit_ADS1x15
 import Adafruit_MCP4725
 
 
@@ -72,7 +72,7 @@ GPIO.output(8, 0)  # set CW off
 
 class Main_Screen(FloatLayout):
         dac = Adafruit_MCP4725.MCP4725(address=0x61, busnum=1)
-        adc = Adafruit_ADS1x15.ADS1115()
+ #       adc = Adafruit_ADS1x15.ADS1115()
         GAIN = 1
         meter = 0
         utc_time = StringProperty()
@@ -113,6 +113,7 @@ class Main_Screen(FloatLayout):
         filter_stop_x = NumericProperty()
         sota_bw = StringProperty()
         sota_center = NumericProperty()
+        speed = NumericProperty()
         def rf_preamp(self):
             self.rf_preamp_bolean = not self.rf_preamp_bolean
             if self.rf_preamp_bolean == True:
@@ -181,6 +182,8 @@ class Main_Screen(FloatLayout):
             else:
                 rit_tx.value = 0
                 rit.value = 0
+        def slider(self,slider_value):
+             speed.value  = int(slider_value)
 
         def step_callback(obj, arrow):
             if ( arrow == 'right' and step.value > 0.00001) :
@@ -272,7 +275,11 @@ class Main_Screen(FloatLayout):
             self.filter_start_x = dsp_start_x.value/10
             self.filter_stop_x = dsp_stop_x.value/10
             ## ADC converter
-            self.meter = int(self.adc.read_adc(0, gain=self.GAIN))
+            #self.meter = int(self.adc.read_adc(2, gain=self.GAIN))
+            #speed.value = int(self.adc.read_adc(0, gain=self.GAIN))
+            #print self.meter
+            #print main_screen.slider_id.value
+
 class MyApp(App):
       
     def build(self):
@@ -296,6 +303,7 @@ if __name__ == '__main__':
     rit = Value('d',0 )
     rit_rx = Value('i',0 )
     rit_tx = Value('i',0 )
+    speed = Value('i',0 )
     dsp_start_x = Value('i', 200)
     dsp_stop_x = Value('i' , 3500)
     sota_dsp_mode = Value('i' , 1) 
@@ -304,7 +312,7 @@ if __name__ == '__main__':
     proc_1.start()
     proc_2 = multiprocessing.Process(target=dsp.sota_dsp , args = (sota_dsp_mode,dsp_start_x,dsp_stop_x) )    
     proc_2.start()
-    proc_3 = multiprocessing.Process(target=keyer.iambic)
+    proc_3 = multiprocessing.Process(target=keyer.iambic , args = (1, speed))
     proc_3.start()
     MyApp().run()
 

@@ -19,10 +19,12 @@ GPIO.output(7, 0)  # set key off
 GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Dah
 GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Dit 
 
-def iambic():
-    adc = Adafruit_ADS1x15.ADS1115()
+def iambic(dummy,adc0):
+    
     while True:
-                speed = float(adc.read_adc(0, 1)/20000)
+                tmp_speed = adc0.value
+                speed = float((100-tmp_speed)/1000)
+                print speed
                 if (GPIO.input(5)) == 0 :
                     GPIO.output(7, 1)  # set CW on
                     sleep(speed)    
