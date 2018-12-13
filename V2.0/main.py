@@ -14,7 +14,7 @@ import multiprocessing
 from multiprocessing import Process, Value
 import RPi.GPIO as GPIO
 
-#import Adafruit_ADS1x15
+import Adafruit_ADS1x15
 import Adafruit_MCP4725
 
 
@@ -72,9 +72,10 @@ GPIO.output(8, 0)  # set CW off
 
 class Main_Screen(FloatLayout):
         dac = Adafruit_MCP4725.MCP4725(address=0x61, busnum=1)
- #       adc = Adafruit_ADS1x15.ADS1115()
+        adc = Adafruit_ADS1x15.ADS1115()
         GAIN = 1
         meter = 0
+        power = 0
         utc_time = StringProperty()
         M1 = StringProperty()
         M2 = StringProperty()
@@ -89,10 +90,14 @@ class Main_Screen(FloatLayout):
        
 
         meter = NumericProperty()
+        power = NumericProperty()
         af_preamp_bolean = False
         af_preamp_status = StringProperty('[color=#008000]Off[/color]')
         rf_preamp_bolean = False
+        full_break_bolean = False
         rf_preamp_status = StringProperty('[color=#008000]Off[/color]')
+        full_break_status = StringProperty('[color=#008000]Off[/color]')
+        
         mode_bolean = False
         mode_status = StringProperty('Usb')
         agc_status = StringProperty('On')
@@ -206,6 +211,18 @@ class Main_Screen(FloatLayout):
                 sota_dsp_mode.value = 1
         def band_switch(dummy,band):
             touch_event.value = int('2'+band)
+        
+        
+        def full_break(self):
+            self.full_break_bolean = not self.full_break_bolean
+            if self.full_break_bolean == True:
+                self.full_break_status = '[color=#FF0000]On[/color]'
+                full_break.value = 1
+            else:
+                self.full_break_status = '[color=#008000]Off[/color]'
+                full_break.value = 0 
+
+
 
         def update(self,*args):
             global start_freq
@@ -276,9 +293,9 @@ class Main_Screen(FloatLayout):
             self.filter_stop_x = dsp_stop_x.value/10
             ## ADC converter
             #self.meter = int(self.adc.read_adc(2, gain=self.GAIN))
-            #speed.value = int(self.adc.read_adc(0, gain=self.GAIN))
-            #print self.meter
-            #print main_screen.slider_id.value
+            speed.value = int(self.adc.read_adc(0, gain=self.GAIN))
+            self.power = int(self.adc.read_adc(3, gain=self.GAIN))
+            self.meter = self.power/60
 
 class MyApp(App):
       
@@ -304,16 +321,17 @@ if __name__ == '__main__':
     rit_rx = Value('i',0 )
     rit_tx = Value('i',0 )
     speed = Value('i',0 )
+    full_break = Value('i', 0)
     dsp_start_x = Value('i', 200)
     dsp_stop_x = Value('i' , 3500)
     sota_dsp_mode = Value('i' , 1) 
     touch_event = Value('i',int('2'+str(start_freq)) )   
-    proc_1 = multiprocessing.Process(target=encoder.buttons , args = (freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo) )
+    proc_1 = multiprocessing.Process(target=encoder.buttons , args = (freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo,full_break) )
     proc_1.start()
     proc_2 = multiprocessing.Process(target=dsp.sota_dsp , args = (sota_dsp_mode,dsp_start_x,dsp_stop_x) )    
     proc_2.start()
-    proc_3 = multiprocessing.Process(target=keyer.iambic , args = (1, speed))
-    proc_3.start()
+    #proc_3 = multiprocessing.Process(target=keyer.iambic , args = (1, speed))
+    #proc_3.start()
     MyApp().run()
 
     ######## LEGEND ######

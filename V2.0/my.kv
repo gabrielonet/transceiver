@@ -7,10 +7,17 @@
                 name: 'home'
                 FloatLayout:
                     canvas:
+                        #Color:
+                        #    rgba: 0,255,0,1
                         Line:
-                            points: [10,200 ,root.filter_start_x, 200,root.filter_start_x, 240,root.filter_stop_x,240,root.filter_stop_x,200,360,200]    
-                        Line: 
-                            points: [200,200 ,200,250 ]    
+                            points: [10,200 ,root.filter_start_x, 200,root.filter_start_x + 10, 240,root.filter_stop_x,240,root.filter_stop_x+10,200,360,200]    
+                        #Line:
+                        #    points: [430,240    ,790,240,   790,170,   430,170,   430,240]   
+                    #Label:
+                    #    text: 'Cw Speed'
+                    #    pos: (440,160)
+                    #    size_hint: (.1, .1)                            
+                        
                             
                     Label:
                         markup: True
@@ -41,11 +48,12 @@
                         size_hint: (.5, 1)
                     ProgressBar:
                         pos: (35, 120)
+                        color: 
                         size_hint: (.4, 1)
                         value: root.meter
                     Label:
                         markup: True                     
-                        text: 'PWR____5___10____15___20____40____60____80____100 W'   
+                        text: 'PWR___2.5___5___7.5___10___12.5___15___17.5___20 W'   
                         #text: '  S____1____3____5____7_____9_____10____30____50 dB'
                         pos: (0 ,105)
                         size_hint: (.5, 1)
@@ -63,16 +71,16 @@
                         background_color: (1, 1, 1, 0)
  
                               
- 
-                    Slider:
-                        id: slider_id
-                        min: 30
-                        max: 60
-                        step: 1
-                        pos: (430, 180)
-                        size_hint: (.45, .1)
-                        on_touch_move: root.slider(slider_id.value)
-                        on_touch_up: root.slider(slider_id.value)                        
+                    #Slider:
+                    #    id: slider_id
+                    #    min: 30
+                    #    max: 60
+                    #    step: 1
+                    #    value: 45
+                    #    pos: (430, 180)
+                    #    size_hint: (.45, .1)
+                    #    on_touch_move: root.slider(slider_id.value)
+                    #    on_touch_up: root.slider(slider_id.value)                        
 
                         
                     ToggleButton:
@@ -260,6 +268,14 @@
         BoxLayout:
             orientation: 'horizontal'
             size_hint: 1, .1
+            
+            ToggleButton:
+                markup: True
+                name: 'AGC'
+                text: 'AGC Mode'
+                #on_press: root.rf_preamp()
+                background_normal:  "img/shape_off.png"
+                background_down: "img/shape_on.png"            
             ToggleButton:
                 markup: True
                 name: 'RF Preamp'
@@ -275,6 +291,14 @@
                 background_normal:  "img/shape_off.png"
                 background_down: "img/shape_on.png"
                 
+            ToggleButton:
+                markup: True
+                name: 'CW Break'
+                text: 'CW Break '+root.full_break_status
+                on_press: root.full_break()
+                background_normal:  "img/shape_off.png"
+                background_down: "img/shape_on.png"                
+                
 
             #ToggleButton:
             #    markup: True
@@ -287,10 +311,10 @@
                 
                 
                 
-            Label:
-                markup: True
-                text: '[size=24]'+root.utc_time+'[/size]'
-                font_size: 18                
+            #Label:
+            #    markup: True
+            #    text: '[size=24]'+root.utc_time+'[/size]'
+            #    font_size: 18                
  
             
 

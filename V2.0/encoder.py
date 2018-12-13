@@ -18,6 +18,8 @@ GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # RIT enc A
 GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP) # RIT enc B 
 GPIO.setup(11, GPIO.IN, pull_up_down=GPIO.PUD_UP) # PTT 
 GPIO.setup(12, GPIO.OUT)  # Tx/Rx Relay 
+GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # arduino PTT 
+
 GPIO.output(12, 0)  # set TX/RX ro RX
 
 GPIO.setup(14, GPIO.OUT)  # A - Band Relay
@@ -32,7 +34,7 @@ rit_rx_enc = 0
 rit_tx_enc = 0
 semaphor = 0
 
-def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo):
+def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full_break):
     def knob(greycode):
                 global encoder_temp
                 # detect if rotary right
@@ -103,7 +105,7 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo):
     def ptt(*args):
             global rit_rx_enc
             global rit_tx_enc
-            if  GPIO.input(11) == 0 :
+            if  ( GPIO.input(11) == 0 or (GPIO.input(5) == 0 and full_break.value == 1) ):
                 GPIO.output(20, 1)
                 GPIO.output(12, 1) 
                 tcvr_status.value = 1
@@ -113,6 +115,7 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo):
                 rit.value = rit_rx_enc
                 if af_pre.value == 1:
                     GPIO.output(20, 0)
+            print 'printing ' + str(full_break.value )
             vfo()
 
     def vfo():
@@ -166,6 +169,7 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo):
     GPIO.add_event_detect(22, GPIO.BOTH, callback=clarifier)
     GPIO.add_event_detect(27, GPIO.BOTH, callback=clarifier)
     GPIO.add_event_detect(11, GPIO.BOTH, callback=ptt)
+    GPIO.add_event_detect(5, GPIO.BOTH, callback=ptt)
     vfo() #  generate VFO freq at reboot
     #bfo() #  generate BFO freq at reboot 
     try:
