@@ -15,7 +15,7 @@ from multiprocessing import Process, Value
 import RPi.GPIO as GPIO
 
 import Adafruit_ADS1x15
-import Adafruit_MCP4725
+#import Adafruit_MCP4725
 
 
 
@@ -71,7 +71,7 @@ GPIO.output(8, 0)  # set CW off
 
 
 class Main_Screen(FloatLayout):
-        dac = Adafruit_MCP4725.MCP4725(address=0x61, busnum=1)
+        #dac = Adafruit_MCP4725.MCP4725(address=0x61, busnum=1)
         adc = Adafruit_ADS1x15.ADS1115()
         GAIN = 1
         meter = 0
@@ -242,34 +242,34 @@ class Main_Screen(FloatLayout):
                         GPIO.output(15, 0) 
                         GPIO.output(18, 0)
                         button_image = "img/shape_off.png"
-                        self.dac.set_voltage(1265)
+                        #self.dac.set_voltage(1265)
                         band_tmp = 3.5
                 if 5 < int(str(self.M1)+str(self.M2)) <=9:
                         GPIO.output(14, 1)  
                         GPIO.output(15, 0) 
                         GPIO.output(18, 0)
-                        self.dac.set_voltage(1271)
+                        #self.dac.set_voltage(1271)
                         band_tmp = 7
                 if 9 < int(str(self.M1)+str(self.M2)) <=18:
                         GPIO.output(14, 0)  
                         GPIO.output(15, 1) 
                         GPIO.output(18, 0) 
-                        self.dac.set_voltage(1315)
+                        #self.dac.set_voltage(1300)
                         band_tmp = 14
                 if 18 < int(str(self.M1)+str(self.M2)) <=24:
                         GPIO.output(14, 1)  
                         GPIO.output(15, 1) 
                         GPIO.output(18, 0)
-                        self.dac.set_voltage(1495)
+                        #self.dac.set_voltage(1495)
                         band_tmp = 21
                 if 24 < int(str(self.M1)+str(self.M2)) <=30:
                         GPIO.output(14, 0)  
                         GPIO.output(15, 0) 
                         GPIO.output(18, 1)
-                        self.dac.set_voltage(1530)
+                        #self.dac.set_voltage(1530)
                         band_tmp = 28
-                print int(str(self.M1)+str(self.M2))
-                print band_tmp
+                #print int(str(self.M1)+str(self.M2))
+                #print band_tmp
             if step.value == 1:
                 self.M2 = '[u]'+self.M2+'[/u]'
             if step.value == .1:
@@ -293,9 +293,11 @@ class Main_Screen(FloatLayout):
             self.filter_stop_x = dsp_stop_x.value/10
             ## ADC converter
             #self.meter = int(self.adc.read_adc(2, gain=self.GAIN))
-            speed.value = int(self.adc.read_adc(0, gain=self.GAIN))
-            self.power = int(self.adc.read_adc(3, gain=self.GAIN))
-            self.meter = self.power/60
+            #speed.value = int(self.adc.read_adc(0, gain=self.GAIN))
+            self.power = int(self.adc.read_adc(3, gain=8))
+            #print self.power
+            self.meter = (26000-self.power)/140
+            
 
 class MyApp(App):
       

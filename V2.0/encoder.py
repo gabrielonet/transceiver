@@ -10,6 +10,10 @@ from math import floor
 import fractions
 from fractions import Fraction
 from RPi import GPIO
+import Adafruit_MCP4725
+dac = Adafruit_MCP4725.MCP4725(address=0x61, busnum=1)
+
+
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # VFO enc A
@@ -99,8 +103,39 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
                 integrat(freq.value+rit_tx_enc/100)
 
 
-
-
+    def vfo_level(*args):
+                if 0 <= freq.value <=5:
+                    if tcvr_status.value == 0 :
+                         dac.set_voltage(1200)
+                    else: 
+                        dac.set_voltage(1130)
+                if 5 < freq.value <=9:
+                    if tcvr_status.value == 0 :
+                         dac.set_voltage(1265)
+                    else: 
+                        dac.set_voltage(0)
+                if 9 < freq.value <=18:
+                    if tcvr_status.value == 0 :
+                         dac.set_voltage(1265)
+                    else: 
+                        dac.set_voltage(0)
+                if 18 < freq.value <=24:
+                    if tcvr_status.value == 0 :
+                         dac.set_voltage(1265)
+                    else: 
+                        dac.set_voltage(0)                        
+                if 24 < freq.value <=30:
+                    if tcvr_status.value == 0 :
+                         dac.set_voltage(1265)
+                    else: 
+                        dac.set_voltage(0)
+                        
+           
+                        
+                        
+                        
+                        
+                        
 
     def ptt(*args):
             global rit_rx_enc
@@ -115,14 +150,15 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
                 rit.value = rit_rx_enc
                 if af_pre.value == 1:
                     GPIO.output(20, 0)
-            print 'printing ' + str(full_break.value )
+            
             vfo()
+            
 
     def vfo():
             global rit_rx_enc
             global rit_tx_enc
             if tcvr_status.value == 0:
-                si_freq =  freq.value + rit_rx_enc + 9.0006 + bfo.value
+                si_freq =  freq.value + rit_rx_enc + 9.0005 + bfo.value
             else:
                 si_freq = freq.value + rit_tx_enc
             integrat(si_freq)
@@ -134,6 +170,7 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
             ## Set bfo for USB/LSB filter (9 mhz sharp)
             #si.setupPLL(si.PLL_B, 28, 1039, 12500)
             #si.setupMultisynth(1, si.PLL_B, 78)
+            vfo_level()
 
     rit.value = 0
     tcvr_status.value = 0
@@ -141,7 +178,6 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
     si.enableOutputs(True)  
 
     def integrat(freq):
-        #print freq
         vco=970
         div=int(vco/freq)
         vco=freq*div
@@ -162,6 +198,7 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
     def touch_rit():
         print 'touch screen RIT event happened'
         vfo()
+        vfo_level()
 
     
     GPIO.add_event_detect(4, GPIO.BOTH, callback=knob)
@@ -225,11 +262,10 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
                         bfo.value = 0
                         vfo()
                     if touch_event.value == 38:
-                        bfo.value = 0.0006
+                        bfo.value = 0.001
                         vfo()                        
 
 
-                #print touch_event.value    
                 touch_event.value = 0
     except KeyboardInterrupt:
         print "good bye yo8rxp"
