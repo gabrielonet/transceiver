@@ -21,7 +21,6 @@ import Adafruit_ADS1x15
 
 import encoder
 import dsp
-import keyer
 #import Kivy framework stuff
 import kivy
 from kivy.app import App
@@ -59,6 +58,8 @@ GPIO.setup(20, GPIO.OUT)  # Audio preamp
 GPIO.setup(23, GPIO.OUT)  # Usb
 GPIO.setup(25, GPIO.OUT)  # Lsb
 GPIO.setup(8, GPIO.OUT)  # CW
+GPIO.setup(16, GPIO.OUT)  #  AGC_mode
+GPIO.output(16, 0)  #  Set AGC to auto
 
 
 
@@ -68,6 +69,7 @@ GPIO.output(20, 1)  # set Audio  Preamp to off
 GPIO.output(23, 1)  # set USB on
 GPIO.output(25, 0)  # set LSB off
 GPIO.output(8, 0)  # set CW off
+GPIO.output(20, 0)
 
 
 class Main_Screen(FloatLayout):
@@ -100,9 +102,9 @@ class Main_Screen(FloatLayout):
         
         mode_bolean = False
         mode_status = StringProperty('Usb')
-        agc_status = StringProperty('On')
+        agc_status = StringProperty('Auto')
         sota_bolean = False
-        agc_bolean = False
+        agc_bolean = True
 
         dsp_mode = StringProperty('Center Mode')
         tcvr_status = StringProperty()
@@ -146,12 +148,16 @@ class Main_Screen(FloatLayout):
 
         def agc(self):
             self.agc_bolean = not self.agc_bolean
-            if self.agc_bolean == False:
-                self.agc_status = 'on'
+            if self.agc_bolean == True:
+                self.agc_status = 'Auto'
                 self.agc_mode = 1
+                GPIO.output(16,0)
+
+                
             else:
-                self.agc_status = 'off'
+                self.agc_status = 'Manual ->'
                 self.agc_mode = 0
+                GPIO.output(16,1)
 
 
         def sys_shut_down(arg):

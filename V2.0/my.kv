@@ -46,9 +46,9 @@
                         text: '  S____1____3____5____7_____9____+10___+30___+50 dB'
                         pos: (10 ,140)
                         size_hint: (.5, 1)
+                        
                     ProgressBar:
                         pos: (35, 120)
-                        color: 
                         size_hint: (.4, 1)
                         value: root.meter
                     Label:
@@ -271,11 +271,11 @@
             
             ToggleButton:
                 markup: True
-                name: 'AGC'
-                text: 'AGC Mode'
-                #on_press: root.rf_preamp()
+                name: 'CW Break'
+                text: '<- CW Break '+root.full_break_status
+                on_press: root.full_break()
                 background_normal:  "img/shape_off.png"
-                background_down: "img/shape_on.png"            
+                background_down: "img/shape_on.png"         
             ToggleButton:
                 markup: True
                 name: 'RF Preamp'
@@ -283,30 +283,24 @@
                 on_press: root.rf_preamp()
                 background_normal:  "img/shape_off.png"
                 background_down: "img/shape_on.png"
-            ToggleButton:
-                markup: True
-                name: 'AF Preamp'
-                text: 'AF Preamp '+root.af_preamp_status
-                on_press: root.af_preamp()
-                background_normal:  "img/shape_off.png"
-                background_down: "img/shape_on.png"
+            #ToggleButton:
+                #markup: True
+                #name: 'AF Preamp'
+                #text: 'AF Preamp '+root.af_preamp_status
+                #on_press: root.af_preamp()
+                #background_normal:  "img/shape_off.png"
+                #background_down: "img/shape_on.png"
                 
-            ToggleButton:
-                markup: True
-                name: 'CW Break'
-                text: 'CW Break '+root.full_break_status
-                on_press: root.full_break()
-                background_normal:  "img/shape_off.png"
-                background_down: "img/shape_on.png"                
+       
                 
 
-            #ToggleButton:
-            #    markup: True
-            #    name: 'AGC'
-            #    text: 'AGC '+ root.agc_status
-            #    on_press: root.agc()
-            #    background_normal:  "img/shape_off.png"
-            #    background_down: "img/shape_on.png"                
+            ToggleButton:
+                markup: True
+                name: 'AGC'
+                text: 'AGC '+ root.agc_status
+                on_press: root.agc()
+                background_normal:  "img/shape_off.png"
+                background_down: "img/shape_on.png"                
                 
                 
                 

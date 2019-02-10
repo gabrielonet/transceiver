@@ -29,8 +29,7 @@ GPIO.output(12, 0)  # set TX/RX ro RX
 GPIO.setup(14, GPIO.OUT)  # A - Band Relay
 GPIO.setup(15, GPIO.OUT)  # B  -Band Relay
 GPIO.setup(18, GPIO.OUT)  # C  -Band Relay
-GPIO.setup(16, GPIO.OUT)  #  Key out
-GPIO.setup(16, 0)  #  Key out to transmit
+
 
 encoder_temp = 0
 rit_temp = 0
@@ -106,27 +105,27 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
     def vfo_level(*args):
                 if 0 <= freq.value <=5:
                     if tcvr_status.value == 0 :
-                         dac.set_voltage(1200)
+                         dac.set_voltage(9000)
                     else: 
                         dac.set_voltage(1130)
                 if 5 < freq.value <=9:
                     if tcvr_status.value == 0 :
-                         dac.set_voltage(1265)
+                         dac.set_voltage(9000)
                     else: 
                         dac.set_voltage(0)
                 if 9 < freq.value <=18:
                     if tcvr_status.value == 0 :
-                         dac.set_voltage(1265)
+                         dac.set_voltage(9000)
                     else: 
                         dac.set_voltage(0)
                 if 18 < freq.value <=24:
                     if tcvr_status.value == 0 :
-                         dac.set_voltage(1265)
+                         dac.set_voltage(9000)
                     else: 
                         dac.set_voltage(0)                        
                 if 24 < freq.value <=30:
                     if tcvr_status.value == 0 :
-                         dac.set_voltage(1265)
+                         dac.set_voltage(9000)
                     else: 
                         dac.set_voltage(0)
                         
@@ -134,22 +133,25 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
                         
                         
                         
-                        
+    def ptt_arduino(*args):
+        if (GPIO.input(5) == 1) :
+                GPIO.output(20, 0)
+        else:
+             GPIO.output(20, 1)
+        ptt()    
+        
                         
 
     def ptt(*args):
             global rit_rx_enc
             global rit_tx_enc
             if  ( GPIO.input(11) == 0 or (GPIO.input(5) == 0 and full_break.value == 1) ):
-                GPIO.output(20, 1)
                 GPIO.output(12, 1) 
                 tcvr_status.value = 1
             else:
                 GPIO.output(12, 0)             
                 tcvr_status.value = 0
                 rit.value = rit_rx_enc
-                if af_pre.value == 1:
-                    GPIO.output(20, 0)
             
             vfo()
             
@@ -206,7 +208,7 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
     GPIO.add_event_detect(22, GPIO.BOTH, callback=clarifier)
     GPIO.add_event_detect(27, GPIO.BOTH, callback=clarifier)
     GPIO.add_event_detect(11, GPIO.BOTH, callback=ptt)
-    GPIO.add_event_detect(5, GPIO.BOTH, callback=ptt)
+    GPIO.add_event_detect(5, GPIO.BOTH, callback=ptt_arduino)
     vfo() #  generate VFO freq at reboot
     #bfo() #  generate BFO freq at reboot 
     try:
