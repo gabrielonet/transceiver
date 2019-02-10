@@ -5,19 +5,26 @@ Adafruit ADC converter
 Adafruit DAC converter
 SotaBeam Vari audio DSP module
 
-Working :
-CW speed (potentiometer tight to one of ADC converter, and a child process as keyer)
-Tx is keyed by reed relay controlled by keyer app
-_______________________________________
 
+
+##############################
 Not working yet ! : 
 Rit Tx , Rit Rx  , Tx listen
 Frequency manual dialpad
 Computer contesting interfacing
-keyer delay to allow relays to switch on prior to effective transmit (full break)
 
-Remarks :
-Only 1 GPIO left available, in the future I will need a GPIO extender
-In order to avoid Si5351 crosstalking, I made a separate Xtall BFO. In the future will use a secondary Si5351 ontop of arduino
-nano and controlled by Raspberry Pi depending of CW / USB filters (Cw filter shape is shifted up to 1khz,
-so instead of 9 mhz USB / LSB , for CW I need  9.001 BFO)
+
+#################################
+
+Working:
+Reduced Si5351 output level inserting 0x0C in registers, so a much cleaner VFO output is achieved.
+Arduino BFO
+Secondary Arduino keyer
+Arduino keyer PTT tight to Raspberry Pi
+Break In touch button, so once keying and that button is on , it transmits
+Keyer monitor auto volume reducing once keying
+AGC manual / auto selection, if manual then a Potentiometer is used to controll IF gain
+S-meter based on AGC level
+RF Preamp touch button  
+
+
