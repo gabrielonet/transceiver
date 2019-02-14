@@ -13,6 +13,10 @@ from RPi import GPIO
 import Adafruit_MCP4725
 dac = Adafruit_MCP4725.MCP4725(address=0x61, busnum=1)
 
+import serial
+
+
+
 
 
 GPIO.setmode(GPIO.BCM)
@@ -38,6 +42,12 @@ rit_tx_enc = 0
 semaphor = 0
 
 def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full_break):
+
+    y=""
+    serialport = "/dev/ttyUSB0"
+    ser = serial.Serial(serialport, 9600, timeout=0)
+
+    
     def knob(greycode):
                 global encoder_temp
                 # detect if rotary right
@@ -214,7 +224,21 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
     try:
         while True:
             ## this is the place where main process c_types value changes are executing shit inside loop on sleep timing  bases without using observer as variable changes event
-            sleep(0.1)
+            #sleep(0.1)
+            freq_len=len(str(int(freq.value*10)))
+            if freq_len <3 :
+                serial_freq = str("0" + str(int(freq.value*10)))
+            else:
+                serial_freq = str(int(freq.value*10))
+            x =  ser.read()
+            if x != ";":
+                disp = str(y)+str(x)
+                y=disp
+            else:
+                y = ""
+            if disp == "FA":
+                ser.write("FA000" + str(serial_freq)+"00000;")
+
             if  touch_event.value !=  0:
                 if touch_event.value == 1:
                     touch_rit()

@@ -276,7 +276,7 @@ class Si5351(object):
         self.i2c.write8(baseaddr + 7, (P2 & 0x000000FF))
 
         # Configure the clk control and enable the output
-        clkControlReg = 0x0C          # 0x0F = 8mA drive strength, MS0 as CLK0 source, Clock not inverted, powered up
+        clkControlReg = 0x0F          # 0x0F = 8mA drive strength, MS0 as CLK0 source, Clock not inverted, powered up
         if pll == self.PLL_B: clkControlReg |= (1 << 5)   # Uses PLLB 
         if num == 0: clkControlReg |= (1 << 6)            # Integer mode
         if output == 0: self.i2c.write8(SI5351_REGISTER_16_CLK0_CONTROL, clkControlReg)

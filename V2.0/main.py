@@ -229,7 +229,6 @@ class Main_Screen(FloatLayout):
                 full_break.value = 0 
 
 
-
         def update(self,*args):
             global start_freq
             global band_tmp
@@ -341,6 +340,8 @@ if __name__ == '__main__':
     #proc_3 = multiprocessing.Process(target=keyer.iambic , args = (1, speed))
     #proc_3.start()
     MyApp().run()
+    
+   
 
     ######## LEGEND ######
     # 1x - rit events
