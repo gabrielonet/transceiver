@@ -7,27 +7,48 @@
                 name: 'home'
                 FloatLayout:
                     canvas:
-                        #Color:
-                        #    rgba: 0,255,0,1
                         Line:
-                            points: [10,200 ,root.filter_start_x, 200,root.filter_start_x + 10, 240,root.filter_stop_x,240,root.filter_stop_x+10,200,360,200]    
-                        #Line:
-                        #    points: [430,240    ,790,240,   790,170,   430,170,   430,240]   
-                    #Label:
-                    #    text: 'Cw Speed'
-                    #    pos: (440,160)
-                    #    size_hint: (.1, .1)                            
-                        
+                            points: [10,220 ,   20,220 ,30,260, 340,260   ,350,220, 360,220 ]     
+                        Line:
+                            points:
+                        Line:
+                            points: [10,160 ,root.filter_start_x, 160,root.filter_start_x + 10, 200,root.filter_stop_x,200,root.filter_stop_x+10,160,360,160]    
+
+
                             
+                    Button:
+                        markup: True
+                        #font_size: 48
+                        text: root.mode_usb
+                        pos: (20 ,270)
+                        size_hint: (.1, .1)
+                        background_normal:  "img/shape_off.png"
+                        on_press: root.mode(23)
+                          
+                    Button:
+                        markup: True
+                        text: root.mode_usbcw
+                        pos: (110 ,270)
+                        size_hint: (.15, .1)
+                        background_normal:  "img/shape_off.png"
+                        on_press: root.mode(8)
+                    Button:
+                        markup: True
+                        text: root.mode_lsb
+                        pos: (250 ,270)
+                        size_hint: (.1, .1)
+                        background_normal:  "img/shape_off.png"
+                        on_press: root.mode(25)
+                        
                     Label:
                         markup: True
                         text: str(root.filter_start_x*10)+' Hz'
-                        pos: (root.filter_start_x ,140)
+                        pos: (root.filter_start_x ,120)
                         size_hint: (.1, .1)
                     Label:
                         markup: True
                         text: str(root.filter_stop_x*10)+' Hz'
-                        pos: (root.filter_stop_x ,260)
+                        pos: (root.filter_stop_x ,180)
                         size_hint: (.1, .1)
 
                         
@@ -64,23 +85,12 @@
                     Button:
                         markup: True
                         font_size: 48
-                        text: root.M1 +root.M2+'.'+root.K1+root.K2+root.K3+'.'+root.H1+root.H2+ '[size=24]   Mhz[/size]'
+                        text: root.M1 +root.M2+'.'+root.K1+root.K2+root.K3+'.' + root.H1+root.H2+ '[size=24]   Mhz[/size]'
                         pos: (430 ,340)
                         size_hint: (.45, .1)
                         #on_press: _screen_manager.current = 'dialpad'
                         background_color: (1, 1, 1, 0)
- 
-                              
-                    #Slider:
-                    #    id: slider_id
-                    #    min: 30
-                    #    max: 60
-                    #    step: 1
-                    #    value: 45
-                    #    pos: (430, 180)
-                    #    size_hint: (.45, .1)
-                    #    on_touch_move: root.slider(slider_id.value)
-                    #    on_touch_up: root.slider(slider_id.value)                        
+                        
 
                         
                     ToggleButton:
@@ -169,29 +179,7 @@
                         #on_press: root.band_switch('35')
                         #background_normal:  root.button_image                                  
 
-            Screen:
-                name: 'Mode'
-                GridLayout: 
-                    cols: 3
-                    padding: 100
-                    row_force_default: True
-                    row_default_height: 60
-                    size_hint_x: None
-                    width: 600
-                    Button:
-                        text: "USB"
-                        #background_normal:  root.button_image   
-                        on_press: root.mode(23)
-                    Button:
-                        text: "LSB"
-                        #background_normal:  root.button_image                                
-                        on_press: root.mode(25)
-                    Button:
-                        text: "CW"
-                        #background_normal:  root.button_image                          
-                        on_press: root.mode(8)
-                        
-                        
+    
                         
     AnchorLayout:
         anchor_x: 'left'
@@ -209,22 +197,14 @@
                 #on_press: _screen_manager.current = 'home'
                 on_press: _screen_manager.current = 'home'
                 
+                
             Button:
                 markup: True
                 text:  'Band'
                 #font_size:  24
-                #background_normal:  "img/normal.png"
-                #background_down:  "img/down.png"
-                #on_press: _screen_manager.current = 'home'
+                background_normal:  "img/shape_off.png"
                 on_press: _screen_manager.current = 'band'               
-            Button:
-                markup: True
-                text:  'Mode'
-                #font_size:  24
-                #background_normal:  "img/normal.png"
-                #background_down:  "img/down.png"
-                #on_press: _screen_manager.current = 'home'
-                on_press: _screen_manager.current = 'Mode'                              
+                           
             Button:
                 markup: True
                 text:  'System'
@@ -272,7 +252,7 @@
             ToggleButton:
                 markup: True
                 name: 'CW Break'
-                text: '<- CW Break '+root.full_break_status
+                text: '<-Speed/CW Break '+root.full_break_status
                 on_press: root.full_break()
                 background_normal:  "img/shape_off.png"
                 background_down: "img/shape_on.png"         
@@ -283,14 +263,7 @@
                 on_press: root.rf_preamp()
                 background_normal:  "img/shape_off.png"
                 background_down: "img/shape_on.png"
-            #ToggleButton:
-                #markup: True
-                #name: 'AF Preamp'
-                #text: 'AF Preamp '+root.af_preamp_status
-                #on_press: root.af_preamp()
-                #background_normal:  "img/shape_off.png"
-                #background_down: "img/shape_on.png"
-                
+            
        
                 
 
@@ -305,11 +278,7 @@
                 
                 
                 
-            #Label:
-            #    markup: True
-            #    text: '[size=24]'+root.utc_time+'[/size]'
-            #    font_size: 18                
- 
+        
             
 
 

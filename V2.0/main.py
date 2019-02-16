@@ -121,6 +121,11 @@ class Main_Screen(FloatLayout):
         sota_bw = StringProperty()
         sota_center = NumericProperty()
         speed = NumericProperty()
+        mode_usb=StringProperty('[color=#FF0000]' + "USB" + '[/color]')
+        mode_usbcw=StringProperty("USB+CW")
+        mode_lsb=StringProperty("LSB")
+        
+        
         def rf_preamp(self):
             self.rf_preamp_bolean = not self.rf_preamp_bolean
             if self.rf_preamp_bolean == True:
@@ -135,14 +140,26 @@ class Main_Screen(FloatLayout):
                 GPIO.output(self.last_mode, 0)
                 GPIO.output(23, 1)
                 self.last_mode = 23
+                self.mode_usb= '[color=#FF0000]' + "USB" + '[/color]'
+                self.mode_usbcw= 'USB+CW'
+                self.mode_lsb= 'LSB'
+
             if mode_value == 25:
                 GPIO.output(self.last_mode, 0)
                 GPIO.output(25, 1)
                 self.last_mode = 25
+                self.mode_usb= 'USB'
+                self.mode_usbcw= 'USB+CW'
+                self.mode_lsb= '[color=#FF0000]' + "LSB" + '[/color]'             
+                
             if mode_value == 8:
                 GPIO.output(self.last_mode, 0)                
                 GPIO.output(8, 1)
                 self.last_mode = 8 
+                self.mode_usb= 'USB'
+                self.mode_usbcw= '[color=#FF0000]' + "USB+CW" + '[/color]'
+                self.mode_lsb= 'LSB'
+                
             touch_event.value = int('3'+ str(self.last_mode))    
             #print self.last_mode    
 
@@ -276,23 +293,24 @@ class Main_Screen(FloatLayout):
                 #print int(str(self.M1)+str(self.M2))
                 #print band_tmp
             if step.value == 1:
-                self.M2 = '[u]'+self.M2+'[/u]'
+                self.M2 = '[color=#FF0000]'+self.M2+'[/color]'
             if step.value == .1:
-                self.K1 = '[u]'+self.K1+'[/u]'
+                self.K1 = '[color=#FF0000]'+self.K1+'[/color]'
             if step.value == .01:
-                self.K2 = '[u]'+self.K2+'[/u]'
+                self.K2 = '[color=#FF0000]'+self.K2+'[/color]'
             if step.value == .001:
-                self.K3 = '[u]'+self.K3+'[/u]'
+                self.K3 = '[color=#FF0000]'+self.K3+'[/color]'
             if step.value == .0001:
-                self.H1 = '[u]'+self.H1+'[/u]'            
+                self.H1 = '[color=#FF0000]'+self.H1+'[/color]'            
             if step.value == .00001:
-                self.H2 = '[u]'+self.H2+'[/u]'               
+                self.H2 = '[color=#FF0000]'+self.H2+'[/color]'               
             self.utc_time = str(datetime.now().strftime('%Y-%m-%d %H:%M'))
             self.rit = str("%0.2f" % Decimal(rit.value*1000))
             if tcvr_status.value == 0:
                 self.tcvr_status = '[color=#008000]Rx[/color]'
             else:
                 self.tcvr_status = '[color=#FF0000]Tx[/color]'
+                
             ### DSP UPDATE ###
             self.filter_start_x = dsp_start_x.value/10
             self.filter_stop_x = dsp_stop_x.value/10
@@ -302,7 +320,6 @@ class Main_Screen(FloatLayout):
             self.power = int(self.adc.read_adc(3, gain=8))
             #print self.power
             self.meter = (26000-self.power)/140
-            
 
 class MyApp(App):
       
