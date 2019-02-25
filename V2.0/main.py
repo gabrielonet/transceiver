@@ -21,6 +21,7 @@ import Adafruit_ADS1x15
 
 import encoder
 import dsp
+import comm
 #import Kivy framework stuff
 import kivy
 from kivy.app import App
@@ -124,6 +125,9 @@ class Main_Screen(FloatLayout):
         mode_usb=StringProperty('[color=#FF0000]' + "USB" + '[/color]')
         mode_usbcw=StringProperty("USB+CW")
         mode_lsb=StringProperty("LSB")
+        
+
+        
         
         
         def rf_preamp(self):
@@ -229,7 +233,7 @@ class Main_Screen(FloatLayout):
             else:
                 GPIO.output(13, 0)
                 sleep(0.1)
-                GPIO.output(13, 1)				
+                GPIO.output(13, 1)              
                 self.dsp_mode = 'Center Mode'
                 sota_dsp_mode.value = 1
         def band_switch(dummy,band):
@@ -354,8 +358,8 @@ if __name__ == '__main__':
     proc_1.start()
     proc_2 = multiprocessing.Process(target=dsp.sota_dsp , args = (sota_dsp_mode,dsp_start_x,dsp_stop_x) )    
     proc_2.start()
-    #proc_3 = multiprocessing.Process(target=keyer.iambic , args = (1, speed))
-    #proc_3.start()
+    proc_3 = multiprocessing.Process(target=comm.comm_transmision , args = (1, freq))
+    proc_3.start()
     MyApp().run()
     
    
@@ -365,5 +369,4 @@ if __name__ == '__main__':
     # 2x - band events
     # 3x - mode events
     
-
 

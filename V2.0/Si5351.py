@@ -1,7 +1,7 @@
 
 from Adafruit_I2C import Adafruit_I2C
-import smbus
-import time
+#import smbus
+#import time
 
 
 
