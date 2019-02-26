@@ -2,9 +2,16 @@ def comm_transmision(dummy,freq):
           
             import serial
             from serial import Serial
+            from time import sleep
             y=""
-            serialport = "/dev/ttyUSB0"
-            ser = serial.Serial(serialport, 9600)
+            ser = serial.Serial(
+            port='/dev/ttyUSB0',
+            baudrate=9600,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE,
+            bytesize=serial.EIGHTBITS
+            )
+                
             while True :
 
                 freq_len=len(str(int(freq.value*10)))
@@ -12,18 +19,9 @@ def comm_transmision(dummy,freq):
                     serial_freq = str("0" + str(int(freq.value*10)))
                 else:
                     serial_freq = str(int(freq.value*10))
-
-                
-                x =  ser.read()
-               
-                
-                if x != ";":
-                    disp = str(y)+str(x)
-                    y=disp
-                else:
-                    y = ""
-                if disp == "FA":
-                    ser.write("FA000" + str(serial_freq)+"00000;")
-                    print "Disp = "+str(disp)
-                    print 'sending FA'     
+                ser.write("IF00014175000     +999000000130000000;")
+                ser.write("FA000"+str(serial_freq)+"00000;")
+                     
                     
+                
+         
