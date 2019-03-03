@@ -1,6 +1,8 @@
 #!/usr/bin/python
 import time
 import os
+os.nice(-19)
+
 import sys
 from time import sleep
 from decimal import Decimal

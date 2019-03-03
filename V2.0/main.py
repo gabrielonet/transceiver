@@ -334,7 +334,7 @@ class MyApp(App):
         main_screen = Main_Screen()
         # Add the UI elements to the layout:
         layout.add_widget(main_screen)
-        Clock.schedule_interval(main_screen.update, 0)
+        Clock.schedule_interval(main_screen.update, 0.03)
         return layout
 if __name__ == '__main__':
     start_freq =14
