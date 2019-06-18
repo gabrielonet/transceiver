@@ -147,22 +147,27 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
     def ptt(*args):
             global rit_rx_enc
             global rit_tx_enc
-            if  ( GPIO.input(11) == 0 or (GPIO.input(5) == 0 and full_break.value == 1) ):
-                GPIO.output(12, 1) 
-                tcvr_status.value = 1
+            if  7 <= freq.value <= 7.2 :   
+                if  ( GPIO.input(11) == 0 or (GPIO.input(5) == 0 and full_break.value == 1)    ):
+                    GPIO.output(12, 1) 
+                    tcvr_status.value = 1
+                else:
+                    GPIO.output(12, 0)             
+                    tcvr_status.value = 0
+                    rit.value = rit_rx_enc
+                vfo()    
             else:
-                GPIO.output(12, 0)             
-                tcvr_status.value = 0
-                rit.value = rit_rx_enc
-            
-            vfo()
+                    GPIO.output(12, 0)             
+                    tcvr_status.value = 0
+                    rit.value = rit_rx_enc
+                    vfo()
             
 
     def vfo():
             global rit_rx_enc
             global rit_tx_enc
             if tcvr_status.value == 0:
-                si_freq =  freq.value + rit_rx_enc + 9.0005 + bfo.value
+                si_freq =  freq.value + rit_rx_enc + 9.00015 + bfo.value
             else:
                 si_freq = freq.value + rit_tx_enc
             integrat(si_freq)
@@ -228,7 +233,6 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
                         #GPIO.output(15, 0) 
                         #GPIO.output(18, 0)  
                         freq.value = 3.5
-                        vfo()
                     if touch_event.value == 27:
                         print 'relay 40 meters'
                         #GPIO.output(14, 1)  
@@ -242,14 +246,12 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
                         #GPIO.output(15, 1) 
                         #GPIO.output(18, 0)
                         freq.value = 14
-                        vfo()
                     if touch_event.value == 221:
                         print 'relay 15 meters'
                         #GPIO.output(14, 1)  
                         #GPIO.output(15, 1) 
                         #GPIO.output(18, 0)
                         freq.value = 21
-                        vfo()
                         
                     if touch_event.value == 228:
                         print 'relay 10 meters'
@@ -257,7 +259,8 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
                         #GPIO.output(15, 0) 
                         #GPIO.output(18, 1) 
                         freq.value = 28
-                        vfo()
+                    ptt()
+
                 if str(touch_event.value).startswith(('3')) == True:
                     if touch_event.value == 323:
                         bfo.value =0
@@ -266,7 +269,7 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
                         bfo.value = 0
                         vfo()
                     if touch_event.value == 38:
-                        bfo.value = 0.001
+                        bfo.value = 0.0007
                         vfo()                        
 
 
@@ -280,4 +283,3 @@ def buttons(freq,step,tcvr_status,rit,rit_rx,rit_tx,touch_event,af_pre,bfo, full
 
 
   
-

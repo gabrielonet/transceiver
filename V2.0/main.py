@@ -334,7 +334,7 @@ class MyApp(App):
         main_screen = Main_Screen()
         # Add the UI elements to the layout:
         layout.add_widget(main_screen)
-        Clock.schedule_interval(main_screen.update, 0.03)
+        Clock.schedule_interval(main_screen.update, 0.05)
         return layout
 if __name__ == '__main__':
     start_freq =14
@@ -350,6 +350,7 @@ if __name__ == '__main__':
     rit_tx = Value('i',0 )
     speed = Value('i',0 )
     full_break = Value('i', 0)
+    tx_enable = Value('i', 0)
     dsp_start_x = Value('i', 200)
     dsp_stop_x = Value('i' , 3500)
     sota_dsp_mode = Value('i' , 1) 
