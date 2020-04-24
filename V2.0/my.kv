@@ -6,278 +6,271 @@
             Screen:
                 name: 'home'
                 FloatLayout:
-                    canvas:
-                        Line:
-                            points: [10,220 ,   20,220 ,30,260, 340,260   ,350,220, 360,220 ]     
-                        Line:
-                            points:
-                        Line:
-                            points: [10,160 ,root.filter_start_x, 160,root.filter_start_x + 10, 200,root.filter_stop_x,200,root.filter_stop_x+10,160,360,160]    
-
-
-                            
+                    Image:
+                        pos: self.pos
+                        size: 800,420
+                        source: 'img/fundal.jpg'
+                        size_hint: (1, 1)     
                     Button:
                         markup: True
-                        #font_size: 48
-                        text: root.mode_usb
-                        pos: (20 ,270)
-                        size_hint: (.1, .1)
-                        background_normal:  "img/shape_off.png"
-                        on_press: root.mode(23)
-                          
-                    Button:
-                        markup: True
-                        text: root.mode_usbcw
-                        pos: (110 ,270)
-                        size_hint: (.15, .1)
-                        background_normal:  "img/shape_off.png"
-                        on_press: root.mode(8)
-                    Button:
-                        markup: True
-                        text: root.mode_lsb
-                        pos: (250 ,270)
-                        size_hint: (.1, .1)
-                        background_normal:  "img/shape_off.png"
-                        on_press: root.mode(25)
-                        
-                    Label:
-                        markup: True
-                        text: str(root.filter_start_x*10)+' Hz'
-                        pos: (root.filter_start_x ,120)
-                        size_hint: (.1, .1)
-                    Label:
-                        markup: True
-                        text: str(root.filter_stop_x*10)+' Hz'
-                        pos: (root.filter_stop_x ,180)
-                        size_hint: (.1, .1)
-
-                        
-                    ToggleButton:
-                        markup: True
-                        name: 'sota mode'
-                        text: 'DSP ' + root.dsp_mode
-                        on_press: root.sota_mode()
-                        pos: (10 ,80)
+                        text:  'System'
+                        on_press: _screen_manager.current = 'System' 
+                        pos: (70 ,40)
                         size_hint: (.2, .1)
                         background_normal:  "img/shape_off.png"
-                        background_down: "img/shape_on.png"                                  
-
-                    Label:
-                        markup: True                     
-                        text: '  S____1____3____5____7_____9____+10___+30___+50 dB'
-                        pos: (10 ,140)
-                        size_hint: (.5, 1)
-                        
-                    ProgressBar:
-                        pos: (35, 120)
-                        size_hint: (.4, 1)
-                        value: root.meter
-                    Label:
-                        markup: True                     
-                        text: 'PWR___2.5___5___7.5___10___12.5___15___17.5___20 W'   
-                        #text: '  S____1____3____5____7_____9_____10____30____50 dB'
-                        pos: (0 ,105)
-                        size_hint: (.5, 1)
-                        
-                   
-
-                
+                        background_down: "img/shape_on.png"
                     Button:
                         markup: True
                         font_size: 48
-                        text: root.M1 +root.M2+'.'+root.K1+root.K2+root.K3+'.' + root.H1 +  root.H2+ '[size=24]   Mhz[/size]'
-                        pos: (430 ,340)
+                        text: '[size=24]YO8RXP HF 1KW LDMOS AMPLIFIER[/size]'
+                        pos: (200 ,440)
                         size_hint: (.45, .1)
-                        #on_press: _screen_manager.current = 'dialpad'
                         background_color: (1, 1, 1, 0)
-                        
-
-                        
-                    ToggleButton:
-                        name: 'RX Rit'
-                        text: 'Rx '+root.rit_rx_status
-                        on_press: root.rit_rx()
-                        pos: (450 ,280)
-                        size_hint: (.1, .1)
-                        background_normal:  "img/shape_off.png"
-                        background_down: "img/shape_on.png"
-                    ToggleButton:
-                        name: 'TX Rit' 
-                        text: 'Tx '+root.rit_tx_status
-                        on_press: root.rit_tx()
-                        pos: (540 ,280)
-                        size_hint: (.1, .1)
-                        background_normal:  "img/shape_off.png"
-                        background_down: "img/shape_on.png"
-                    Button:
-                        text: 'Tx Listen' 
-                        #on_press: root.rit()
-                        pos: (630 ,280)
-                        size_hint: (.1, .1)
-                        background_normal:  "img/shape_off.png"
-                        background_down: "img/shape_on.png"
-####################################################################################################################
-
-
-
+                    Image:
+                        source: 'img/hologram.png'
+                        #size: self.texture_size
+                        pos: (13,60)
+                        size_hint: (0.5, 0.6)           
                     Label:
-                        markup: True 
-                        text: '[size=18]RIT '+root.tcvr_status+'[/size]  \n'+root.rit
-                        font_size: 24
-                        pos: 720, 280
-                        size_hint: .1, .1
+                        markup: True                     
+                        text: '[size=20][b][color=#00D53C]Receive[/color][/size][/b]'   
+                        pos: (170 ,195)
+                        size_hint: (.1, .1)    
+                                             
+#################################################################################################                        
+                    ProgressBar:
+                        pos: (60, 120)
+                        size_hint: (.5, 1)
+                        value: root.fwd_proc
+                    Label:
+                        markup: True                     
+                        text: 'FWD___2.5___5___7.5___10___12.5___15___17.5___20 W'   
+                        pos: (60 ,105)
+                        size_hint: (.5, 1)
+                        
+                    ProgressBar:
+                        pos: (60, 165)
+                        size_hint: (.5, 1)
+                        value: root.ref_proc
+                    Label:
+                        markup: True                     
+                        text: 'REF___2.5___5___7.5___10___12.5___15___17.5___20 W'   
+                        pos: (60 ,150)
+                        size_hint: (.5, 1)                        
+                    ProgressBar:
+                        pos: (60, 75)
+                        size_hint: (.5, 1)
+                        value: root.drain_proc
+                    Label:
+                        markup: True                     
+                        text: 'Id___2.5___5___7.5___10___12.5___15___17.5___20 Amps'   
+                        pos: (60 ,60)
+                        size_hint: (.5, 1)                  
+#########################################################################################################                        
 
-            Screen:
-                name: 'band'
-                GridLayout: 
-                    cols: 3
-                    padding: 100
-                    row_force_default: True
-                    row_default_height: 60
-                    size_hint_x: None
-                    width: 600
-                    Button:
-                        text: "3.5 Mhz"
-                        on_press: _screen_manager.current = 'home'
-                        on_press: root.band_switch('35')
-                        #background_normal:  root.button_image
-                    Button:
-                        text: "7 Mhz"
-                        on_press: _screen_manager.current = 'home'
-                        on_press: root.band_switch('7')
-                    Button:
-                        text: "14 Mhz"
-                        on_press: _screen_manager.current = 'home'
-                        on_press: root.band_switch('14')
-                    Button:
-                        text: "21 Mhz"
-                        on_press: _screen_manager.current = 'home'
-                        on_press: root.band_switch('21')                        
-                    Button:
-                        text: "28 Mhz"
-                        on_press: _screen_manager.current = 'home'
-                        on_press: root.band_switch('28')   
+                    ##### SENSORS ####
+                                                                   
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint: 1, 0.5
+                        pos:(480,70)    
+                        Image:
+                            source: 'img/cooler.png'
+                            size: self.texture_size
+                            pos: (100,170)
+                            size_hint: (0.1, 0.1) 
+                        Button:
+                            markup: True
+                            font_size: 24
+                            text: str(root.speed_1)+'%'
+                           # pos: (0 ,168)
+                            size_hint: (.1, .1)
+                            background_color: (1, 1, 1, 0)
+                        Image:
+                            source: 'img/temperature.png'
+                            size: self.texture_size
+                            pos: (200,170)
+                            size_hint: (0.1, 0.1)           
+                        Button:
+                            markup: True
+                            font_size: 24
+                            text: str(root.temp)[0:4]+'°C'
+                           # pos: (0 ,168)
+                            size_hint: (.1, .1)
+                            background_color: (1, 1, 1, 0)
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint: 0.2, .8
+                        pos:(580,60)
+  
+                        ToggleButton:
+                            markup: True
+                            name: 'RF Preamp'
+                            text: '80 M'
+                            group: 'band'
+                            background_normal:  "img/shape_off.png"
+                            background_down: "img/shape_on.png"
+                        ToggleButton:
+                            markup: True
+                            name: 'AGC'
+                            text: '40 M'
+                            group: 'band'
+                            background_normal:  "img/shape_off.png"
+                            background_down: "img/shape_on.png"         
+    
+                        ToggleButton:
+                            markup: True
+                            name: 'RF Preamp'
+                            text: '20 M'
+                            group: 'band'
+                            background_normal:  "img/shape_off.png"
+                            background_down: "img/shape_on.png"         
+                    
+                        ToggleButton:
+                            markup: True
+                            name: 'CW Break'
+                            text: '15 M'
+                            group: 'band'
+                            background_normal:  "img/shape_off.png"
+                            background_down: "img/shape_on.png"         
+                       
+                        ToggleButton:
+                            markup: True
+                            name: 'AGC'
+                            text: '10 M'
+                            group: 'band'
+                            background_normal:  "img/shape_off.png"
+                            background_down: "img/shape_on.png"                            
+                        ToggleButton:
+                            markup: True
+                            name: 'Auto Icom'
+                            text: 'Auto Icom'
+                            group: 'band'
+                            state: 'down'
+                            background_normal:  "img/shape_off.png"
+                            background_down: "img/shape_on.png"        
             Screen:
                 name: 'System'
-                GridLayout: 
-                    cols: 3
-                    padding: 100
-                    row_force_default: True
-                    row_default_height: 60
-                    size_hint_x: None
-                    width: 600
+                FloatLayout: 
+                    Image:
+                        pos: self.pos
+                        size: 800,420
+                        source: 'img/fundal.jpg'
+                        size_hint: (1, 1)     
                     Button:
-                        text: "System Shutdown"
+                        markup: True
+                        text:  'Home'
+                        on_press: root.home()
+                        pos: (340 ,80)
+                        size_hint: (.2, .1)
+                        background_normal:  "img/shape_off.png"
+                        background_down: "img/shape_on.png"   
+                    Button:
+                        markup: True
+                        text:  'Shutdown'
                         on_press: root.sys_shut_down()
-                        #on_press: root.band_switch('35')
-                        #background_normal:  root.button_image                        
-
-
-                    Button:
-                        text: "System Reboot"
-                        on_press: root.sys_reboot()
-                        #on_press: root.band_switch('35')
-                        #background_normal:  root.button_image                                  
-
-    
+                        pos: (570 ,320)
+                        size_hint: (.2, .1)
+                        background_normal:  "img/shape_off.png"
+                        background_down: "img/shape_on.png"   
                         
-    AnchorLayout:
-        anchor_x: 'left'
-        anchor_y: 'bottom'
-        BoxLayout:
-            orientation: 'horizontal'
-            size_hint: .5, .1
+                    Button:
+                        markup: True
+                        text:  'Reboot'
+                        on_press: root.sys_reboot() 
+                        pos: (570 ,250)
+                        size_hint: (.2, .1)
+                        background_normal:  "img/shape_off.png"
+                        background_down: "img/shape_on.png"   
+                        
+                      
+#########################  Start button ###############################################                   
+                    ToggleButton:
+                        markup: True
+                        name: 'Power'
+                        pos: (70 ,60)
+                        size_hint: (.13, .2)
+                        background_normal:  root.power_led
+                        background_down: root.power_led
+                        on_press: root.power()
+                    Label:
+                        markup: True                     
+                        text: '[size=20][b]'+root.power_text+'[/size][/b]'   
+                        pos: (170 ,80)
+                        size_hint: (.1, .1)                            
+                                         
 
-            Button:
-                markup: True
-                text:  'Home'
-                #font_size:  24
-                background_normal:  "img/shape_off.png"
-                background_down:  "img/shape_off.png"
-                #on_press: _screen_manager.current = 'home'
-                on_press: _screen_manager.current = 'home'
+############################### 12 V Led Fuse #######################################                        
+                    Image:
+                        pos: (50 ,350)
+                        size: 800,420
+                        source: 'img/red-led.png'
+                        size_hint: (0.1, 0.1)   
+                    Label:
+                        markup: True                     
+                        text: '[size=20][b] Input Pwr[/size][/b]'   
+                        pos: (120 ,350)
+                        size_hint: (.1, .1)          
+                        
+############################### 50 V Led Fuse ######################################                       
+                    Image:
+                        pos: (50 ,300)
+                        source: 'img/green-led.png'
+                        size_hint: (0.1, 0.1)         
+                    Label:
+                        markup: True                     
+                        text: '[size=20][b] 50V Fuse[/size][/b]'   
+                        pos: (120 ,300)
+                        size_hint: (.1, .1)                            
+                        
+                       
+############################### Bias LED ###############################################
+                    Image:
+                        pos: (50 ,250)
+                        size: 800,420
+                        source: 'img/green-led.png'
+                        size_hint: (0.1, 0.1)   
+                    Label:
+                        markup: True                     
+                        text: '[size=20][b]Bias voltage [/size][/b]'   
+                        pos: (140 ,250)
+                        size_hint: (.1, .1)                            
+                                                  
+############################### SWR LED ###############################################
+                    Image:
+                        pos: (300 ,250)
+                        size: 800,420
+                        source: root.swr_led
+                        size_hint: (0.1, 0.1)   
+                    Label:
+                        markup: True                     
+                        text: '[size=20][b]SWR Fault  [/size][/b]'   
+                        pos: (390 ,250)
+                        size_hint: (.1, .1)                                                         
                 
-                
-            Button:
-                markup: True
-                text:  'Band'
-                #font_size:  24
-                background_normal:  "img/shape_off.png"
-                on_press: _screen_manager.current = 'band'               
-                           
-            Button:
-                markup: True
-                text:  'System'
-                on_press: _screen_manager.current = 'System'
-                
-    AnchorLayout:
-        anchor_x: 'right'
-        anchor_y: 'bottom'
-        BoxLayout:
-            orientation: 'horizontal'
-            size_hint: .2, .1
-            Button:
-                markup: True
-                text:  '[b]<'
-                font_size:  24
-                background_normal:  "img/normal.png"
-                background_down:  "img/down.png"
-                on_press: root.step_callback('left')
-                
-            Label:
-                text: 'STEP'  
-                
-            Button:
-                markup: True
-                text:  '[b]>'
-                font_size:  24
-                background_normal:  "img/normal.png"
-                background_down:  "img/down.png"
-                on_press: root.step_callback('right')
-                 
-                
-                
-                
-                
-    AnchorLayout:
-        anchor_x: 'center'
-        anchor_y: 'top'
-        BoxLayout:
-            orientation: 'horizontal'
-            size_hint: 1, .1
+############################### Drain LED ###############################################
+                    Image:
+                        pos: (300, 300)
+                        size: 800,420
+                        source: root.drain_led
+                        size_hint: (0.1, 0.1)   
+                    Label:
+                        markup: True                     
+                        text: '[size=20][b]Over Current [/size][/b]'   
+                        pos: (390 ,300)
+                        size_hint: (.1, .1)                                    
             
-            ToggleButton:
-                markup: True
-                name: 'CW Break'
-                text: '<-Speed/CW Break '+root.full_break_status
-                on_press: root.full_break()
-                background_normal:  "img/shape_off.png"
-                background_down: "img/shape_on.png"         
-            ToggleButton:
-                markup: True
-                name: 'RF Preamp'
-                text: 'RF Preamp '+ root.rf_preamp_status
-                on_press: root.rf_preamp()
-                background_normal:  "img/shape_off.png"
-                background_down: "img/shape_on.png"
-            
-       
-                
-
-            ToggleButton:
-                markup: True
-                name: 'AGC'
-                text: 'AGC '+ root.agc_status
-                on_press: root.agc()
-                background_normal:  "img/shape_off.png"
-                background_down: "img/shape_on.png"                
-                
-                
-                
-                
-        
-            
-
+############################### Filter LED ###############################################
+                    Image:
+                        pos: (300 ,350)
+                        size: 800,420
+                        source: root.filters_led
+                        size_hint: (0.1, 0.1)   
+                    Label:
+                        markup: True                     
+                        text: '[size=20][b]Filters Fault [/size][/b]'   
+                        pos: (390 ,350)
+                        size_hint: (.1, .1)                                    
 
                 
             
