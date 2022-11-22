@@ -6,6 +6,10 @@ from fractions import Fraction
 import time
 from time import *
 
+## SI5351 is based on 4 unknown values equation. So it is impossible resolving it if not using some predetermined values
+## This is where most of users fail to generate propper values, if using bad written ino sketchups then great jitter on output
+## SI5351 DO like integer values, not decimals on dividers
+
 freq = 7.000123 ### in Mhz
 ### VCO in range of 600 - 900 Mhz 
 multisynth_divider = 100 # define static multisynth divider for Freq out in range of 6 to 9 Mhz since VCO freq = Freq out x Multisynth 
