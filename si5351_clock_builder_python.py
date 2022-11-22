@@ -19,12 +19,9 @@ crystal = 25 ### Some models have 27 Mhz crystals inside, mine has 25 Mhz
 ##   VCO = 25 x (a+b/c)  , where 25 is Crystal oscillator and we need to get a, b and c values
 ## As an example , if VCO = 700 then a+b/c = 700/25 =28
 ## In this ideal case, we can set a=28 . then b/c = 0 as b=0 and c =1
-fractional_value = VCO / crystal
 
-print("Freq = " + str(freq) + "Mhz")
-print("VCO = " + str(VCO)+"Mhz")
-print("Multisynth divider = " + str(multisynth_divider))
-print("fractional value = " + str(fractional_value))
+
+fractional_value = VCO / crystal
 
 ###  If fractional_value is not idealy integer, then we should check this, make a = lowest integer part and compute difference
 
@@ -48,5 +45,11 @@ else:
     a = re.sub(r'/.*', '', str(euclid))
     b = re.sub(r'^.*?/', '', str(euclid))
 
+
+
+print("Freq = " + str(freq) + "Mhz")
+print("VCO = " + str(VCO)+"Mhz")
+print("Multisynth divider = " + str(multisynth_divider))
+print("fractional value = " + str(fractional_value))
 print ("a = "+ str(a))
 print ("b= "+ str(b))
