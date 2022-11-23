@@ -1,0 +1,4 @@
+2022 Nov 23
+A static multisynth_divider = 100 was used, so it can generate frequencies  in 6-9 Mhz range -TO BE FIXED
+Some Floating point computation oddities fixed
+Max resolution is 10 Hz
